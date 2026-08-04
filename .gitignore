@@ -1,0 +1,40 @@
+# Secrets and local settings
+.env
+.env.*
+*.key
+*.pem
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Office temporary files
+~$*.xlsx
+~$*.xls
+~$*.docx
+~$*.pptx
+
+# Sensitive health/population data
+private-data/
+patient-data/
+population-data/
+real-data/
+*.csv
+*.xls
+*.xlsx
+*.xlsm
+*.zip
+
+# Allow explicitly reviewed templates/examples
+!**/templates/*.xlsx
+!**/examples/*.xlsx
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
