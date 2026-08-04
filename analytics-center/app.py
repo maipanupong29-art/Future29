@@ -6,6 +6,8 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
+from metrics import rate
+
 REQUIRED_COLUMNS = {
     "village",
     "sex",
@@ -41,12 +43,6 @@ def load_data(uploaded_file=None) -> pd.DataFrame:
         labels=["0–14", "15–34", "35–59", "60–69", "70+"],
     )
     return frame
-
-
-def rate(series: pd.Series) -> float:
-    if len(series) == 0:
-        return 0.0
-    return float(series.mean() * 100)
 
 
 def main() -> None:
