@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import BinaryIO
 
 import pandas as pd
 import plotly.express as px
@@ -15,20 +16,48 @@ REQUIRED_COLUMNS = {
     "diabetes_screened",
     "hypertension_screened",
 }
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024
+MAX_ROWS = 100_000
+
+
+def _file_size(uploaded_file: BinaryIO) -> int:
+    current_position = uploaded_file.tell()
+    uploaded_file.seek(0, 2)
+    size = uploaded_file.tell()
+    uploaded_file.seek(current_position)
+    return size
+
+
+def validate_columns(columns: list[str] | pd.Index) -> None:
+    received = {str(column).strip() for column in columns}
+    missing = REQUIRED_COLUMNS.difference(received)
+    extra = received.difference(REQUIRED_COLUMNS)
+
+    if missing:
+        raise ValueError(f"ขาดคอลัมน์ที่จำเป็น: {', '.join(sorted(missing))}")
+    if extra:
+        raise ValueError(
+            "พบคอลัมน์ที่ไม่ได้รับอนุญาต: "
+            f"{', '.join(sorted(extra))}. "
+            "กรุณาใช้เฉพาะแม่แบบ 5 คอลัมน์ที่กำหนด"
+        )
 
 
 def load_data(uploaded_file=None) -> pd.DataFrame:
     if uploaded_file is not None:
-        frame = pd.read_csv(uploaded_file)
+        if _file_size(uploaded_file) > MAX_UPLOAD_BYTES:
+            raise ValueError("ไฟล์มีขนาดเกิน 5 MB")
+        uploaded_file.seek(0)
+        frame = pd.read_csv(uploaded_file, nrows=MAX_ROWS + 1)
     else:
         sample_path = Path(__file__).parent / "data" / "sample_population.csv"
-        frame = pd.read_csv(sample_path)
+        frame = pd.read_csv(sample_path, nrows=MAX_ROWS + 1)
 
-    missing = REQUIRED_COLUMNS.difference(frame.columns)
-    if missing:
-        raise ValueError(f"ขาดคอลัมน์ที่จำเป็น: {', '.join(sorted(missing))}")
+    if len(frame) > MAX_ROWS:
+        raise ValueError(f"ไฟล์มีจำนวนข้อมูลเกิน {MAX_ROWS:,} แถว")
 
-    frame = frame.copy()
+    validate_columns(frame.columns)
+    frame = frame[list(REQUIRED_COLUMNS)].copy()
     frame["age"] = pd.to_numeric(frame["age"], errors="coerce")
     frame["diabetes_screened"] = pd.to_numeric(
         frame["diabetes_screened"], errors="coerce"
@@ -37,9 +66,12 @@ def load_data(uploaded_file=None) -> pd.DataFrame:
         frame["hypertension_screened"], errors="coerce"
     ).fillna(0)
     frame = frame.dropna(subset=["village", "sex", "age"])
+    frame = frame[frame["age"].between(0, 120)].copy()
+    frame["diabetes_screened"] = frame["diabetes_screened"].clip(0, 1)
+    frame["hypertension_screened"] = frame["hypertension_screened"].clip(0, 1)
     frame["age_group"] = pd.cut(
         frame["age"],
-        bins=[-1, 14, 34, 59, 69, 200],
+        bins=[-1, 14, 34, 59, 69, 120],
         labels=["0–14", "15–34", "35–59", "60–69", "70+"],
     )
     return frame
@@ -56,8 +88,15 @@ def main() -> None:
 
     with st.sidebar:
         st.header("แหล่งข้อมูล")
-        uploaded = st.file_uploader("เลือกไฟล์ CSV", type=["csv"])
-        st.info("ห้ามใช้ไฟล์ที่มีชื่อ HN เลขบัตรประชาชน วันเกิดจริง หรือข้อมูลระบุตัวบุคคล")
+        uploaded = st.file_uploader(
+            "เลือกไฟล์ CSV",
+            type=["csv"],
+            help="สูงสุด 5 MB และ 100,000 แถว",
+        )
+        st.warning(
+            "ระบบรับเฉพาะ 5 คอลัมน์ตามแม่แบบ และจะปฏิเสธไฟล์ที่มีคอลัมน์อื่น "
+            "เช่น ชื่อ HN เลขบัตรประชาชน หรือวันเกิด"
+        )
 
     try:
         data = load_data(uploaded)
