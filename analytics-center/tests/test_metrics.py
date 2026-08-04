@@ -1,6 +1,6 @@
 import pandas as pd
 
-from app import rate
+from metrics import rate
 
 
 def test_rate_returns_percentage():
