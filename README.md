@@ -1,105 +1,46 @@
-# Future29
+# Future29 🧩
 
-## Project Overview
-Future29 is currently in the bootstrap phase. This repository is prepared to become the primary codebase for the product and includes a standard onboarding guide for new contributors.
+พื้นที่กลางสำหรับเก็บเครื่องมือและเอกสารงานของ Future โดยแยกหมวดให้ค้นหา ดูแล และนำกลับมาใช้ซ้ำได้ง่าย
 
-## Goals for New Contributors
-- Understand the repository layout and team conventions quickly.
-- Set up local development in a reproducible way.
-- Know where to add new features, tests, and documentation.
-
-## Recommended Repository Structure
+## หมวดงานหลัก
 
 ```text
 Future29/
-├── README.md
-├── docs/
-│   ├── architecture.md
-│   ├── adr/
-│   └── onboarding.md
-├── src/
-│   ├── core/
-│   ├── modules/
-│   ├── services/
-│   └── utils/
-├── tests/
-│   ├── unit/
-│   ├── integration/
-│   └── e2e/
-├── scripts/
-├── .github/
-│   └── workflows/
-├── .editorconfig
-├── .gitignore
-└── <language-specific config files>
+├── population-tools/        # เครื่องมือจัดการข้อมูลประชากรและไฟล์ Master
+├── excel-public-health/     # สูตร แม่แบบ และสคริปต์ Excel งานสาธารณสุข
+├── calendar-system/         # เครื่องมือสร้าง ตรวจ และจัดการไฟล์ .ics
+├── hospital-automation/     # งานอัตโนมัติ รายงาน KPI และ workflow โรงพยาบาล
+├── health-data/             # โค้ดตัวอย่างสำหรับวิเคราะห์ข้อมูลสุขภาพแบบไม่ระบุตัวบุคคล
+├── docs/                    # คู่มือ มาตรฐาน และบันทึกการออกแบบ
+├── tests/                   # ชุดทดสอบโปรแกรม
+├── scripts/                 # สคริปต์ช่วยงานทั่วไป
+└── .github/                 # แบบฟอร์มและ GitHub Actions
 ```
 
-## Onboarding Checklist
+## หลักการสำคัญ
 
-### 1) Understand the Context
-- Read this README end to end.
-- Read `docs/architecture.md` for high-level design.
-- Check open issues and current roadmap/milestones.
+- ห้ามอัปโหลดข้อมูลผู้ป่วยหรือข้อมูลส่วนบุคคลที่ระบุตัวบุคคลได้
+- เก็บเฉพาะโค้ด แม่แบบเปล่า ข้อมูลตัวอย่างจำลอง และคู่มือ
+- ไฟล์ต้นฉบับสำคัญควรสำรองไว้นอก GitHub ก่อนแก้ไข
+- ใช้ชื่อไฟล์ภาษาอังกฤษแบบสั้นและสื่อความหมาย
+- การเปลี่ยนแปลงสำคัญควรทำผ่าน Branch และ Pull Request
 
-### 2) Local Setup (Template)
-> Replace commands below to match your stack.
+## แนวทางตั้งชื่อ
 
-```bash
-# Example only
-# install dependencies
-<package-manager> install
+- Python: `snake_case.py`
+- เอกสาร: `kebab-case.md`
+- รุ่นไฟล์: ใช้ Git tag หรือ Release แทนการต่อท้าย `(1)`, `(2)`, `final-final`
+- Commit แนะนำ: `feat:`, `fix:`, `docs:`, `test:`, `chore:`
 
-# run application
-<package-manager> run dev
+## จุดเริ่มต้น
 
-# run tests
-<package-manager> test
-```
+1. เลือกหมวดงานที่ตรงกับไฟล์
+2. อ่าน `README.md` ภายในหมวดนั้น
+3. วางโค้ดใน `src/` และชุดทดสอบใน `tests/`
+4. หลีกเลี่ยงการเก็บไฟล์ Excel จริงที่มีข้อมูลบุคคล
+5. บันทึกวิธีใช้และตัวอย่างคำสั่งทุกครั้ง
 
-### 3) Development Workflow
-1. Create a feature branch from `main`.
-2. Implement in `src/` with focused commits.
-3. Add tests under `tests/`.
-4. Run lint + tests locally before pushing.
-5. Open PR with summary, risks, and test evidence.
+## เจ้าของพื้นที่
 
-## Coding & Collaboration Standards
-- Keep modules small and single-purpose.
-- Prefer explicit naming over abbreviations.
-- Add or update tests for every meaningful change.
-- Update docs when behavior or architecture changes.
-- Use conventional commit messages (recommended):
-  - `feat:` new feature
-  - `fix:` bug fix
-  - `docs:` documentation only
-  - `refactor:` internal code improvements
-  - `test:` test-related changes
-  - `chore:` maintenance work
-
-## Architecture Notes (Starter)
-Until implementation begins, use this simple layering model:
-- **Core**: shared domain logic and entities.
-- **Modules**: feature-level business use cases.
-- **Services**: external integrations (DB/API/queues).
-- **Interface Layer**: HTTP handlers, CLI commands, or UI adapters.
-
-## What to Learn Next
-For new team members, recommended learning order:
-1. Product scope and domain vocabulary.
-2. System architecture and module boundaries.
-3. Testing strategy (unit/integration/e2e).
-4. Deployment and CI/CD pipeline.
-5. Observability: logs, metrics, tracing.
-
-## Contribution Template
-When opening a PR, include:
-- What changed
-- Why it changed
-- How it was tested
-- Backward compatibility impact
-- Follow-up tasks
-
-## Ownership (Fill In)
-- Tech lead: `<name>`
-- Review owners: `<team-or-handle>`
-- Slack/Chat channel: `<channel>`
+- GitHub: `maipanupong29-art`
+- Repository หลัก: `Future29`
